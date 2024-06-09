@@ -557,14 +557,32 @@ const customMacAddressProvider: MacAddressProvider = async (device, isFallbackCa
   }
 };
 
-$('#reset-state').on('click', async () => {
-  await conn?.sendCubeCommand({ type: "REQUEST_RESET" });
-  twistyPlayer.alg = '';
-});
+function start(){
+  if(!practiceIsActive){
+    practiceIsActive = true;
+    twistyPlayer.alg = "";
+    nextAlg();
+  }
+}
 
-$('#reset-gyro').on('click', async () => {
-  basis = null;
-});
+function displayAlg(){
+  if(practiceIsActive){
+    $('#alg').html(algs[currentAlgIndex].alg)
+  }
+}
+
+function pause(){
+  if(!isPaused){
+    isPaused = true;
+    $('#paused').html("Paused")
+  }
+  else{
+    isPaused = false;
+    $('#paused').html("")
+    algStart = Date.now()
+  }
+}
+
 
 $('#connect').on('click', async () => {
   if (conn) {
@@ -580,6 +598,23 @@ $('#connect').on('click', async () => {
     $('#deviceMAC').val(conn.deviceMAC);
     $('#connect').html('Disconnect');
   }
+});
+
+
+$('#start').on('click', async () => {
+  start();
+});
+
+$('#displayAlg').on('click', async () => {
+  displayAlg();
+});
+
+$('#pause').on('click', async () => {
+  pause();
+});
+
+$('#reset-gyro').on('click', async () => {
+  basis = null;
 });
 
 var timerState: "IDLE" | "READY" | "RUNNING" | "STOPPED" = "IDLE";
@@ -736,38 +771,23 @@ function activateTimer() {
 
 
 $(document).on('keydown', (event) => {
-  console.log(event.which)
+  // console.log(event.which)
   if (event.which == 32) {
     // spacebar
     event.preventDefault();
     basis = null;
-    //activateTimer();
   }
   if (event.which == 83) {
     // s key
-    if(!practiceIsActive){
-      practiceIsActive = true;
-      twistyPlayer.alg = "";
-      nextAlg();
-    }
+    start();
   }
   if (event.which == 68) {
     // d key
-    if(practiceIsActive){
-      $('#alg').html(algs[currentAlgIndex].alg)
-    }
+    displayAlg();
   }
   if (event.which == 80) {
     // p key
-    if(!isPaused){
-      isPaused = true;
-      $('#paused').html("Paused")
-    }
-    else{
-      isPaused = false;
-      $('#paused').html("")
-      algStart = Date.now()
-    }
+    pause();
   }
 });
 
