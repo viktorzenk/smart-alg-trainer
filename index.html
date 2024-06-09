@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Smart Alg Trainer</title>
+</head>
+
+<body>
+
+  <div id="app">
+
+    <div id="cube"></div>
+
+    
+    <p id="totalAvg" class="center-text">Total average:</p>
+    <p id="alg" class="center-text"></p>
+    <p id="paused" class="center-text"></p>
+    
+    <div class="help">
+
+      <p id="lastTime">Last time:</p>
+      <!-- <p id="avgTime">Alg average:</p> -->
+
+      <p>Connect the cube using buttons below.</p>
+      <p>Press S to start</p>
+      <p>Press D to display alg</p>
+      <p>Press P to pause</p>
+      <p>Press space to reset gyro (hold in WCA orientation)</p>
+    </div>
+    
+      <button id="connect">Connect</button>
+      <!-- <button id="reset-state">Reset State</button> -->
+      <!-- <button id="reset-gyro">Reset Gyro</button> -->
+    
+    <input id="batteryLevel" type="text" readonly value="- n/a -">
+
+    <!-- <div id="timer">0:00.000</div> -->
+
+    <div id="stats"></div>
+
+  </div>
+  <script type="module" src="/src/index.ts"></script>
+
+</body>
+
+</html>
