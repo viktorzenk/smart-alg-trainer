@@ -24,7 +24,9 @@ import { faceletsToPattern, patternToFacelets } from './utils';
 const SOLVED_STATE = "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB";
 
 const defaultStartAvg:number = 10;
-const badTimePriority:number = 2; //0 = no priority
+const badTimePriority:number = 4; //0 = no priority
+const averageOf:number = 5;
+const notCounted:number = 1;
 
 interface AlgInterface{
   alg:string;
@@ -35,7 +37,47 @@ interface AlgInterface{
 
 var algStrings:string[] = [
   "r U R' U' M U R U' R'",
-  "R U R' U' M' U R U' r'"
+  "R U R' U' M' U R U' r'",
+  "R U R' U' R U' R' F' U' F R U R'",
+  "F U R U2 R' U' R U2 R' U' F'",
+  "R U R' U R U2 R' F R U R' U' F'",
+  "R' U' R U' R' U2 R F R U R' U' F'",
+  "f R f' U' r' U' R U M'",
+  "R' U' R' F R F' U R",
+  "R U R' U' R' F R2 U R' U' F'",
+  "R U R' U R' F R F' R U2 R'",
+  "R U2 R2 F R F' R U2 R'",
+  "F R U' R' U' R U R' F'",
+  "F U R U' R2 F' R U R U' R'",
+  "F' U' L' U L2 F L' U' L' U L",
+  "l' U' l L' U' L U l' U l",
+  "r U r' R U R' U' r U' r'",
+  "F' L' U' L U L' U' L U F",
+  "F R U R' U' R U R' U' F'",
+  "r U' r2 U r2 U r2 U' r",
+  "r' U r2 U' r2 U' r2 U r'",
+  "l' U' L U' L' U L U' L' U2 l",
+  "r U R' U R U' R' U R U2 r'",
+  "r U R' U R U2 r'",
+  "r' U' R U' R' U2 r",
+  "r' R2 U R' U R U2 R' U M'",
+  "M' R' U' R U' R' U2 R U' M",
+  "L F' L' U' L U F U' L'",
+  "R' F R U R' U' F' U R",
+  "f R U R' U' R U R' U' f'",
+  "R U R' U R d' R U' R' F' d",
+  "R U2 R2 U' R U' R' U2 F R F'",
+  "r U r' U R U' R' U R U' R' r U' r'",
+  "S' L' U' L U L F' L' f",
+  "S R U R' U' R' F R f'",
+  "f' L' U' L U f",
+  "f R U R' U' f'",
+  "r' U2 R U R' U r",
+  "r U2 R' U' R U' r'",
+  "R U R' U' R' F R F'",
+  "F R U R' U' F'",
+  "L' U' L U' L' U L U L F' L' F",
+  "R U R' U R U' R' U' R' F R F'"
 ]
 
 var algs:AlgInterface[] = [];
@@ -348,8 +390,10 @@ for(i = 0; i < algStrings.length; i++){
 //   },
 // ]
 
+
 for(var i = 0; i < algs.length; i++){
   algs[i].index = i;
+  // console.log(algs[i].alg)
 }
 
 var practiceIsActive = false;
@@ -370,7 +414,6 @@ function updateStats(){
   }
   for(var i = 0; i < algsCopy.length; i++){
     if(algsCopy[i].index == currentAlgIndex){
-      console.log('here');
       $("#stats").append(`<div class="bar current" style="width:${algsCopy[i].avg/maxAvg * 100}%; height:${100/algsCopy.length}%">${algsCopy[i].avg.toFixed(2)}</div>`);
     }
     else if(algsCopy[i].index == lastAlgIndex){
@@ -613,11 +656,18 @@ function nextAlg(){
 }
 
 function avg(times:number[]){
+  var actualNotCounted:number = notCounted;
+  while(times.length <= actualNotCounted*2){
+    actualNotCounted -= 1;
+  }
+  times.sort();
+  console.log(times)
   var cumsum = 0;
-  for(var i = 0; i < times.length; i++){
+  for(var i = actualNotCounted; i < times.length-actualNotCounted; i++){
     cumsum += times[i]
   }
-  return cumsum/times.length;
+  console.log(cumsum/(times.length-actualNotCounted*2))
+  return cumsum/(times.length-actualNotCounted*2);
 }
 
 twistyPlayer.experimentalModel.currentPattern.addFreshListener(async (kpattern) => {
@@ -627,7 +677,7 @@ twistyPlayer.experimentalModel.currentPattern.addFreshListener(async (kpattern) 
     var algStop = Date.now();
     var algTime = (algStop - algStart!)/1000;
     algs[currentAlgIndex!].times.push(algTime);
-    if(algs[currentAlgIndex!].times.length > 10){
+    if(algs[currentAlgIndex!].times.length > averageOf){
       algs[currentAlgIndex!].times.shift();
     }
     console.log(algs[currentAlgIndex!].times)
