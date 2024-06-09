@@ -656,18 +656,19 @@ function nextAlg(){
 }
 
 function avg(times:number[]){
+  var timesCopy:number[] = times.slice()
   var actualNotCounted:number = notCounted;
-  while(times.length <= actualNotCounted*2){
+  while(timesCopy.length <= actualNotCounted*2){
     actualNotCounted -= 1;
   }
-  times.sort();
-  console.log(times)
+  timesCopy.sort();
+  console.log(timesCopy)
   var cumsum = 0;
-  for(var i = actualNotCounted; i < times.length-actualNotCounted; i++){
-    cumsum += times[i]
+  for(var i = actualNotCounted; i < timesCopy.length-actualNotCounted; i++){
+    cumsum += timesCopy[i]
   }
-  console.log(cumsum/(times.length-actualNotCounted*2))
-  return cumsum/(times.length-actualNotCounted*2);
+  console.log(cumsum/(timesCopy.length-actualNotCounted*2))
+  return cumsum/(timesCopy.length-actualNotCounted*2);
 }
 
 twistyPlayer.experimentalModel.currentPattern.addFreshListener(async (kpattern) => {
