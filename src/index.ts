@@ -1,6 +1,6 @@
 import './style.css'
 
-import $ from 'jquery';
+// import $, { timers } from 'jquery';
 import { Subscription, interval } from 'rxjs';
 import { TwistyPlayer } from 'cubing/twisty';
 import { experimentalSolve3x3x3IgnoringCenters } from 'cubing/search';
@@ -26,302 +26,327 @@ const SOLVED_STATE = "UUUUUUUUURRRRRRRRRFFFFFFFFFDDDDDDDDDLLLLLLLLLBBBBBBBBB";
 const defaultStartAvg:number = 10;
 const badTimePriority:number = 2; //0 = no priority
 
-var algs = [
-  {
-    "name":"28",
-    "alg":"r U R' U' M U R U' R'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"57",
-    "alg":"R U R' U' M' U R U' r'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"29",
-    "alg":"R U R' U' R U' R' F' U' F R U R'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"30",
-    "alg":"F U R U2 R' U' R U2 R' U' F'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"41",
-    "alg":"R U R' U R U2 R' F R U R' U' F'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"42",
-    "alg":"R' U' R U' R' U2 R F R U R' U' F'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"34",
-    "alg":"f R f' U' r' U' R U M'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"46",
-    "alg":"R' U' R' F R F' U R",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"9",
-    "alg":"R U R' U' R' F R2 U R' U' F'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"10",
-    "alg":"R U R' U R' F R F' R U2 R'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"35",
-    "alg":"R U2 R2 F R F' R U2 R'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"37",
-    "alg":"F R U' R' U' R U R' F'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"13",
-    "alg":"F U R U' R2 F' R U R U' R'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"14",
-    "alg":"F' U' L' U L2 F L' U' L' U L",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"15",
-    "alg":"l' U' l L' U' L U l' U l",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"16",
-    "alg":"r U r' R U R' U' r U' r'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"47",
-    "alg":"F' L' U' L U L' U' L U F",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"48",
-    "alg":"F R U R' U' R U R' U' F'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"49",
-    "alg":"r U' r2 U r2 U r2 U' r",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"50",
-    "alg":"r' U r2 U' r2 U' r2 U r'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"53",
-    "alg":"l' U' L U' L' U L U' L' U2 l",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"54",
-    "alg":"r U R' U R U' R' U R U2 r'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"7",
-    "alg":"r U R' U R U2 r'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"8",
-    "alg":"r' U' R U' R' U2 r",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"11",
-    "alg":"r' R2 U R' U R U2 R' U M'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"12",
-    "alg":"M' R' U' R U' R' U2 R U' M",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"39",
-    "alg":"L F' L' U' L U F U' L'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"40",
-    "alg":"R' F R U R' U' F' U R",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"51",
-    "alg":"f R U R' U' R U R' U' f'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"52",
-    "alg":"R U R' U R d' R U' R' F' d",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"55",
-    "alg":"R U2 R2 U' R U' R' U2 F R F'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"56",
-    "alg":"r U r' U R U' R' U R U' R' r U' r'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"31",
-    "alg":"S' L' U' L U L F' L' f",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"32",
-    "alg":"S R U R' U' R' F R f'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"43",
-    "alg":"f' L' U' L U f",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"44",
-    "alg":"f R U R' U' f'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"5",
-    "alg":"r' U2 R U R' U r",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"6",
-    "alg":"r U2 R' U' R U' r'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"33",
-    "alg":"R U R' U' R' F R F'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"45",
-    "alg":"F R U R' U' F'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"36",
-    "alg":"L' U' L U' L' U L U L F' L' F",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
-  {
-    "name":"38",
-    "alg":"R U R' U R U' R' U' R' F R F'",
-    "times":[],
-    "avg":defaultStartAvg,
-    "index":0
-  },
+interface AlgInterface{
+  alg:string;
+  times:number[];
+  avg:number;
+  index:number
+}
+
+var algStrings:string[] = [
+  "r U R' U' M U R U' R'",
+  "R U R' U' M' U R U' r'"
 ]
+
+var algs:AlgInterface[] = [];
+
+for(i = 0; i < algStrings.length; i++){
+  var alg:AlgInterface = {
+    alg: algStrings[i],
+    times: [],
+    avg: defaultStartAvg,
+    index: i
+  }
+  algs.push(alg)
+}
+
+
+// var algs = [
+//   {
+//     "name":"28",
+//     "alg":"r U R' U' M U R U' R'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"57",
+//     "alg":"R U R' U' M' U R U' r'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"29",
+//     "alg":"R U R' U' R U' R' F' U' F R U R'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"30",
+//     "alg":"F U R U2 R' U' R U2 R' U' F'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"41",
+//     "alg":"R U R' U R U2 R' F R U R' U' F'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"42",
+//     "alg":"R' U' R U' R' U2 R F R U R' U' F'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"34",
+//     "alg":"f R f' U' r' U' R U M'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"46",
+//     "alg":"R' U' R' F R F' U R",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"9",
+//     "alg":"R U R' U' R' F R2 U R' U' F'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"10",
+//     "alg":"R U R' U R' F R F' R U2 R'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"35",
+//     "alg":"R U2 R2 F R F' R U2 R'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"37",
+//     "alg":"F R U' R' U' R U R' F'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"13",
+//     "alg":"F U R U' R2 F' R U R U' R'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"14",
+//     "alg":"F' U' L' U L2 F L' U' L' U L",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"15",
+//     "alg":"l' U' l L' U' L U l' U l",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"16",
+//     "alg":"r U r' R U R' U' r U' r'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"47",
+//     "alg":"F' L' U' L U L' U' L U F",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"48",
+//     "alg":"F R U R' U' R U R' U' F'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"49",
+//     "alg":"r U' r2 U r2 U r2 U' r",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"50",
+//     "alg":"r' U r2 U' r2 U' r2 U r'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"53",
+//     "alg":"l' U' L U' L' U L U' L' U2 l",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"54",
+//     "alg":"r U R' U R U' R' U R U2 r'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"7",
+//     "alg":"r U R' U R U2 r'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"8",
+//     "alg":"r' U' R U' R' U2 r",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"11",
+//     "alg":"r' R2 U R' U R U2 R' U M'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"12",
+//     "alg":"M' R' U' R U' R' U2 R U' M",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"39",
+//     "alg":"L F' L' U' L U F U' L'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"40",
+//     "alg":"R' F R U R' U' F' U R",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"51",
+//     "alg":"f R U R' U' R U R' U' f'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"52",
+//     "alg":"R U R' U R d' R U' R' F' d",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"55",
+//     "alg":"R U2 R2 U' R U' R' U2 F R F'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"56",
+//     "alg":"r U r' U R U' R' U R U' R' r U' r'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"31",
+//     "alg":"S' L' U' L U L F' L' f",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"32",
+//     "alg":"S R U R' U' R' F R f'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"43",
+//     "alg":"f' L' U' L U f",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"44",
+//     "alg":"f R U R' U' f'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"5",
+//     "alg":"r' U2 R U R' U r",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"6",
+//     "alg":"r U2 R' U' R U' r'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"33",
+//     "alg":"R U R' U' R' F R F'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"45",
+//     "alg":"F R U R' U' F'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"36",
+//     "alg":"L' U' L U' L' U L U L F' L' F",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+//   {
+//     "name":"38",
+//     "alg":"R U R' U R U' R' U' R' F R F'",
+//     "times":[],
+//     "avg":defaultStartAvg,
+//     "index":0
+//   },
+// ]
 
 for(var i = 0; i < algs.length; i++){
   algs[i].index = i;
@@ -329,9 +354,9 @@ for(var i = 0; i < algs.length; i++){
 
 var practiceIsActive = false;
 var isPaused = false;
-var currentAlgIndex:number|undefined = undefined;
-var lastAlgIndex:number|undefined = undefined;
-var algStart:number|undefined = undefined;
+var currentAlgIndex:number = 0;
+var lastAlgIndex:number = 0;
+var algStart:number = 0;
 
 function updateStats(){
   var algsCopy = algs.slice()
@@ -543,10 +568,10 @@ function setTimerState(state: typeof timerState) {
   }
 }
 
-function setupAlg(alg){
-  alg = alg.split(" ");
-  for(var i = 0; i < alg.length; i++){
-    var move = alg[alg.length - i - 1]
+function setupAlg(alg:string){
+  var algArray = alg.split(" ");
+  for(var i = 0; i < algArray.length; i++){
+    var move = algArray[algArray.length - i - 1]
     var lastSymbol = move[move.length - 1]
     if(lastSymbol == "2"){
     }
